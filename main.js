@@ -2,9 +2,10 @@ const { app, BrowserWindow, ipcMain } = require("electron/main");
 const path = require("node:path");
 const {
   connect,
-  getVolume,
   getLaunchPoints,
   getInputList,
+  powerOff,
+  sendKeyboardKey,
 } = require("./lg.js");
 const {
   handleKey,
@@ -15,7 +16,15 @@ const {
   handleClick,
 } = require("./controllers/controller.js");
 
-let win, lgTv;
+let win,
+  lgTv,
+  foregroundApp,
+  audioStatus = {
+    volume: 0,
+    mute: false,
+  },
+  subscribedToEvents = false;
+
 const createWindow = () => {
   win = new BrowserWindow({
     webPreferences: {
@@ -30,36 +39,37 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-  // ipcMain.on("say-hello", (event, msg) => {
-  //   console.log("hello your msg was", msg);
-  //   win.loadURL("http://localhost:5173");
-  // win.loadFile("remote.html");
-  // main();
-  // });
+  const subscribeToEvents = () => {
+    if (subscribedToEvents) return;
+    subscribedToEvents = true;
+    lgTv.subscribe(
+      "ssap://com.webos.applicationManager/getForegroundAppInfo",
+      (_err, res) => {
+        foregroundApp = res;
+        win.webContents.send("get-foreground-app-id", res.appId);
+      }
+    );
+    lgTv.subscribe("ssap://audio/getStatus", (_err, res) => {
+      audioStatus = res;
+      win.webContents.send("get-audio-status", res);
+    });
+  };
+
+  const sendInfo = async () => {
+    const launchPoints = await getLaunchPoints();
+    const inputList = await getInputList();
+    win.webContents.send("get-launch-points", launchPoints);
+    win.webContents.send("get-input-list", inputList);
+    win.webContents.send("get-foreground-app-id", foregroundApp?.appId);
+    win.webContents.send("get-audio-status", audioStatus);
+    setTimeout(subscribeToEvents, 100);
+  };
 
   ipcMain.handle("connectToTv", async (_event, ip) => {
     try {
       lgTv = await connect(ip);
       win.loadURL("http://localhost:5173/#/remote");
       win.webContents.openDevTools();
-      // setTimeout(() => {
-      //   lgtv.subscribe(
-      //     "ssap://com.webos.applicationManager/getForegroundAppInfo",
-      //     (err, res) => {
-      //       console.log(res);
-      //       win.webContents.send("get-volume", 66);
-      //       console.log("sent");
-      //     }
-      //   );
-      // }, 2000);
-      const volume = await getVolume();
-      const launchPoints = await getLaunchPoints();
-      const inputList = await getInputList();
-      setTimeout(() => {
-        win.webContents.send("get-volume", volume);
-        win.webContents.send("get-launch-points", launchPoints);
-        win.webContents.send("get-input-list", inputList);
-      }, 100);
     } catch (error) {
       return error;
     }
@@ -78,6 +88,12 @@ app.whenReady().then(() => {
       handleAppLaunch(action.payload.launchPoint);
     } else if (action.type == "input") {
       handleInputChange(action.payload.input);
+    } else if (action.type == "fetchData") {
+      sendInfo();
+    } else if (action.type == "powerOff") {
+      powerOff();
+    } else if (action.type == "keyboard-key") {
+      sendKeyboardKey(action.payload.key);
     }
   });
 
@@ -91,7 +107,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  lgTv.disconnect();
+  if (lgTv) lgTv.disconnect();
   if (process.platform !== "darwin") {
     app.quit();
   }

@@ -1,4 +1,4 @@
-const ip = "192.168.1.200";
+const ip = "192.168.0.200";
 let lgtv,
   pointerInputSocket,
   fetchingPointerInputSocket = false;
@@ -14,6 +14,7 @@ function connect(tvIp) {
 
     // err
     lgtv.on("error", function (err) {
+      console.log(err);
       reject(err);
     });
 
@@ -149,6 +150,33 @@ const disconnect = () => {
   lgtv.disconnect();
 };
 
+const sendKeyboardKey = (key) => {
+  if (key == "Backspace") {
+    lgtv.request("ssap://com.webos.service.ime/deleteCharacters", {
+      count: 1,
+    });
+    return;
+  }
+  if (key == "Enter") {
+    lgtv.request("ssap://com.webos.service.ime/sendEnterKey");
+    return;
+  }
+  if (key.length > 1) {
+    return;
+  }
+  lgtv.request("ssap://com.webos.service.ime/insertText", {
+    text: key,
+  });
+};
+
+const powerOff = () => {
+  lgtv.request("ssap://system/turnOff", function (err, res) {
+    console.log("TV turned off");
+    lgtv.disconnect();
+    console.log("Disconnected");
+  });
+};
+
 module.exports = {
   connect,
   disconnect,
@@ -163,4 +191,6 @@ module.exports = {
   scroll,
   movePointer,
   click,
+  powerOff,
+  sendKeyboardKey,
 };

@@ -1,6 +1,7 @@
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import Connect from "./pages/Connect";
 import Remote from "./pages/Remote";
+import Pointer from "./pages/Pointer";
 
 const App = () => {
   const router = createHashRouter([
@@ -9,6 +10,10 @@ const App = () => {
       element: <Remote />,
     },
     { path: "/connect", element: <Connect /> },
+    {
+      path: "/pointer",
+      element: <Pointer />,
+    },
   ]);
   return <RouterProvider router={router} />;
 };

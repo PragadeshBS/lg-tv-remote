@@ -10,13 +10,14 @@ Welcome to the LG WebOS TV Controller repository! This Electron-based desktop ap
 
 - **Control Volume/Mute:** Adjust the volume or mute your TV directly from the application.
 
-- **Navigate with Arrow Keys:** Use arrow keys for smooth navigation on your LG WebOS TV.
+- **Navigate and type with your PC:** Use your computer's keyboard and mouse for smooth navigation on your LG WebOS TV.
 
 - **Launch Home:** Return to the home screen of your TV conveniently.
 
 ## Screenshot
 
 ![LG WebOS TV Controller](screenshots/ss.png)
+![LG WebOS TV Controller](screenshots/ss2.png)
 
 ## Known Issues
 

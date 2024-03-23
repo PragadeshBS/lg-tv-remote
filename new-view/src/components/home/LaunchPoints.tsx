@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { shortenText } from "../../shared/utils";
 import LaunchPoint from "../../shared/interfaces/LaunchPoint";
 
@@ -8,21 +7,19 @@ declare global {
   }
 }
 
-const LaunchPoints = () => {
-  const [launchPoints, setLaunchPoints] = useState<LaunchPoint[]>([]);
-
+const LaunchPoints = ({
+  launchPoints,
+  activeAppId,
+}: {
+  launchPoints: LaunchPoint[];
+  activeAppId: string;
+}) => {
   const handleLaunchPointClick = async (launchPoint: LaunchPoint) => {
     await window.electronAPI.handleAction({
       type: "launchPoint",
       payload: { launchPoint },
     });
   };
-
-  useEffect(() => {
-    window.electronAPI.onGetLaunchPoints((launchPoints: LaunchPoint[]) => {
-      setLaunchPoints(launchPoints);
-    });
-  }, []);
 
   return (
     <div className="my-3">
@@ -31,7 +28,9 @@ const LaunchPoints = () => {
         {launchPoints.map((launchPoint) => (
           <div
             key={launchPoint.title}
-            className="flex flex-col w-48 h-36 items-center justify-center cursor-pointer m-1 p-5 rounded-2xl gap-2 app-box"
+            className={`flex flex-col w-48 h-36 items-center justify-center cursor-pointer m-1 p-5 rounded-2xl gap-2 app-box ${
+              activeAppId === launchPoint.id ? "bg-pink-200" : "bg-white"
+            }`}
             onClick={() => handleLaunchPointClick(launchPoint)}
           >
             <img

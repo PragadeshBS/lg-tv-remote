@@ -34,7 +34,7 @@ Welcome to the LG WebOS TV Controller repository! This Electron-based desktop ap
 2. Install dependencies.
 
    ```
-   npm install
+   npm install && cd new-view && npm install && npm run build
    ```
 
 3. Run the application.

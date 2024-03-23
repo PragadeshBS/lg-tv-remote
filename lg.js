@@ -1,5 +1,7 @@
 const ip = "192.168.1.200";
-let lgtv;
+let lgtv,
+  pointerInputSocket,
+  fetchingPointerInputSocket = false;
 
 function connect(tvIp) {
   const tvIpAddres = tvIp || ip;
@@ -42,13 +44,11 @@ const updateVolume = (value) => {
 };
 
 const sendKey = (key) => {
-  lgtv.getSocket(
-    "ssap://com.webos.service.networkinput/getPointerInputSocket",
-    (err, sock) => {
-      if (!err) {
-        sock.send("button", { name: key });
-      }
-    }
+  if (fetchingPointerInputSocket) {
+    return;
+  }
+  getPointerInputSocket().then(() =>
+    pointerInputSocket.send("button", { name: key })
   );
 };
 
@@ -99,6 +99,52 @@ const switchInput = (inputId) => {
   );
 };
 
+const getPointerInputSocket = () => {
+  return new Promise((resolve) => {
+    if (pointerInputSocket) {
+      resolve();
+      return;
+    }
+    console.log("getting pointer input socket");
+    fetchingPointerInputSocket = true;
+    lgtv.getSocket(
+      "ssap://com.webos.service.networkinput/getPointerInputSocket",
+      function (err, sock) {
+        if (!err) {
+          pointerInputSocket = sock;
+          fetchingPointerInputSocket = false;
+          resolve();
+        }
+      }
+    );
+  });
+};
+
+const scroll = (deltaY) => {
+  if (fetchingPointerInputSocket) {
+    return;
+  }
+  getPointerInputSocket().then(() =>
+    pointerInputSocket.send("scroll", { dx: 0, dy: deltaY })
+  );
+};
+
+const movePointer = (x, y) => {
+  if (fetchingPointerInputSocket) {
+    return;
+  }
+  getPointerInputSocket().then(() =>
+    pointerInputSocket.send("move", { dx: x, dy: y })
+  );
+};
+
+const click = () => {
+  if (fetchingPointerInputSocket) {
+    return;
+  }
+  getPointerInputSocket().then(() => pointerInputSocket.send("click"));
+};
+
 const disconnect = () => {
   lgtv.disconnect();
 };
@@ -114,4 +160,7 @@ module.exports = {
   getInputList,
   launchApp,
   switchInput,
+  scroll,
+  movePointer,
+  click,
 };

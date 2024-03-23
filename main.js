@@ -10,6 +10,9 @@ const {
   handleKey,
   handleAppLaunch,
   handleInputChange,
+  handleScroll,
+  handleMouse,
+  handleClick,
 } = require("./controllers/controller.js");
 
 let win, lgTv;
@@ -23,7 +26,7 @@ const createWindow = () => {
   });
 
   win.loadURL("http://localhost:5173/#/connect");
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
@@ -38,7 +41,7 @@ app.whenReady().then(() => {
     try {
       lgTv = await connect(ip);
       win.loadURL("http://localhost:5173/#/remote");
-      // win.webContents.openDevTools();
+      win.webContents.openDevTools();
       // setTimeout(() => {
       //   lgtv.subscribe(
       //     "ssap://com.webos.applicationManager/getForegroundAppInfo",
@@ -65,6 +68,12 @@ app.whenReady().then(() => {
   ipcMain.on("handleAction", (_event, action) => {
     if (action.type == "key") {
       handleKey(action.payload.key);
+    } else if (action.type == "scroll") {
+      handleScroll(action.payload.deltaY);
+    } else if (action.type == "move") {
+      handleMouse(action.payload.x, action.payload.y);
+    } else if (action.type == "click") {
+      handleClick();
     } else if (action.type == "launchPoint") {
       handleAppLaunch(action.payload.launchPoint);
     } else if (action.type == "input") {

@@ -1,23 +1,17 @@
 import { useEffect } from "react";
 import Inputs from "../components/home/Inputs";
 import LaunchPoints from "../components/home/LaunchPoints";
-import keysToHandle from "../shared/keysToHandle";
+import handleKeyDown from "../shared/remoteCalls/handleKeyDown";
+import handleScroll from "../shared/remoteCalls/handleScroll";
+import handleMouseMove from "../shared/remoteCalls/handleMouseMove";
+import handleClick from "../shared/remoteCalls/handleClick";
 
 const Remote = () => {
   useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
-      if (keysToHandle.includes(e.key)) {
-        e.preventDefault();
-        const key = e.key;
-        const action = {
-          type: "key",
-          payload: { key },
-        };
-        await window.electronAPI.handleAction(action);
-      }
-    };
-
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("wheel", handleScroll);
+    document.addEventListener("click", handleClick);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);

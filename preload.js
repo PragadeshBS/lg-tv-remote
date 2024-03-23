@@ -13,4 +13,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("get-foreground-app-id", (_event, value) => callback(value)),
   onGetAudioStatus: (callback) =>
     ipcRenderer.on("get-audio-status", (_event, value) => callback(value)),
+  onConnectionSuccess: (callback) =>
+    ipcRenderer.on("connection-success", (_event, value) => callback(value)),
 });

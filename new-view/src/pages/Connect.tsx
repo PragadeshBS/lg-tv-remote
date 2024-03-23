@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 declare global {
@@ -10,6 +11,7 @@ declare global {
 const Connect = () => {
   const [connecting, setConnecting] = useState<boolean>(true);
   const [ip, setIp] = useState<string>(localStorage.getItem("ip") || "");
+  const navigate = useNavigate();
 
   const connectToTv = async () => {
     setConnecting(true);
@@ -22,6 +24,9 @@ const Connect = () => {
 
   useEffect(() => {
     connectToTv();
+    window.electronAPI.onConnectionSuccess(() => {
+      navigate("/remote");
+    });
   }, []);
 
   if (connecting) return <Loader msg={`Connecting to ${ip || "TV"}...`} />;

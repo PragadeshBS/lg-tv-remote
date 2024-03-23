@@ -9,7 +9,7 @@ const App = () => {
       path: "/remote",
       element: <Remote />,
     },
-    { path: "/connect", element: <Connect /> },
+    { path: "/", element: <Connect /> },
     {
       path: "/pointer",
       element: <Pointer />,

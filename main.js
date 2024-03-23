@@ -36,7 +36,6 @@ const createWindow = () => {
 
   // win.loadURL("http://localhost:5173");
   win.loadFile("./new-view/dist/index.html");
-  win.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
@@ -69,7 +68,6 @@ app.whenReady().then(() => {
   ipcMain.handle("connectToTv", async (_event, ip) => {
     try {
       lgTv = await connect(ip);
-      // win.loadURL("http://localhost:5173/#/remote");
       win.webContents.send("connection-success", true);
     } catch (error) {
       return error;

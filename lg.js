@@ -1,11 +1,13 @@
-const ip = "192.168.0.200";
+const ip = "192.168.1.200";
 let lgtv;
 
-function connect() {
+function connect(tvIp) {
+  const tvIpAddres = tvIp || ip;
+  console.log(tvIpAddres);
   return new Promise((resolve, reject) => {
-    console.log(`connecting to ${ip}...`);
+    console.log(`connecting to ${tvIpAddres}...`);
     lgtv = require("lgtv2")({
-      url: `ws://${ip}:3000`,
+      url: `ws://${tvIpAddres}:3000`,
     });
 
     // err
@@ -97,8 +99,13 @@ const switchInput = (inputId) => {
   );
 };
 
+const disconnect = () => {
+  lgtv.disconnect();
+};
+
 module.exports = {
   connect,
+  disconnect,
   toggleMute,
   updateVolume,
   sendKey,

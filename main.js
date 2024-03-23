@@ -12,7 +12,7 @@ const {
   handleInputChange,
 } = require("./controllers/controller.js");
 
-let win, lgtv;
+let win, lgTv;
 const createWindow = () => {
   win = new BrowserWindow({
     webPreferences: {
@@ -22,8 +22,8 @@ const createWindow = () => {
     height: 800,
   });
 
-  // win.loadFile("index.html");
-  win.loadFile("./views/index.html");
+  win.loadURL("http://localhost:5173/#/connect");
+  // win.webContents.openDevTools();
 };
 
 app.whenReady().then(() => {
@@ -34,10 +34,10 @@ app.whenReady().then(() => {
   // main();
   // });
 
-  ipcMain.handle("connectToTv", async () => {
+  ipcMain.handle("connectToTv", async (_event, ip) => {
     try {
-      lgtv = await connect();
-      win.loadFile("./views/remote.html");
+      lgTv = await connect(ip);
+      win.loadURL("http://localhost:5173/#/remote");
       // win.webContents.openDevTools();
       // setTimeout(() => {
       //   lgtv.subscribe(
@@ -82,6 +82,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
+  lgTv.disconnect();
   if (process.platform !== "darwin") {
     app.quit();
   }

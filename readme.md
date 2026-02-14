@@ -23,7 +23,7 @@ Welcome to the LG WebOS TV Controller repository! This Electron-based desktop ap
 
 - **Disconnected Status not Displayed:** The application currently does not show a disconnected status when the TV gets disconnected. This is a known issue. Please raise a pull request if you have a fix for this.
 
-## How to Use
+## How to Run the Application in development mode
 
 1. Clone the repository to your local machine.
 
@@ -31,19 +31,29 @@ Welcome to the LG WebOS TV Controller repository! This Electron-based desktop ap
    git clone https://github.com/PragadeshBS/lg-tv-remote
    ```
 
-2. Install dependencies.
+2. Install dependencies and start the UI development server.
 
    ```
-   npm install && cd new-view && npm install && npm run build
+   npm install && cd new-view && npm install && npm run dev
    ```
 
-3. Run the application.
+3. In main.js, change/comment the line that loads the URL to load the development server instead of the production build.
+
+   ```javascript
+   // main.js
+   // Change this line:
+   // win.loadFile("./new-view/dist/index.html")
+   // To this:
+   win.loadURL("http://localhost:5173");
+   ```
+
+4. Run the application from the repository root.
 
    ```
-   npm start
+   npm start # this needs to be run from repository root, not from new-view
    ```
 
-4. Enjoy controlling your LG WebOS TV from your desktop!
+5. Enjoy controlling your LG WebOS TV from your desktop!
 
 ## Contributing
 

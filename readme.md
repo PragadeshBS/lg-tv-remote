@@ -1,6 +1,6 @@
 # LG WebOS TV Controller
 
-Welcome to the LG WebOS TV Controller repository! This Electron-based desktop application allows you to control your LG WebOS TVs seamlessly. Whether you want to launch apps, switch inputs, control volume/mute, navigate with arrow keys, or launch the home screen, this app has you covered.
+Welcome to the LG WebOS TV Controller repository! This Electron-based desktop application allows you to control your LG WebOS TVs seamlessly. Whether you want to turn on your TV, launch apps, switch inputs, control volume/mute, navigate with arrow keys, or launch the home screen, this app has you covered.
 
 ## Features
 
@@ -37,7 +37,7 @@ Welcome to the LG WebOS TV Controller repository! This Electron-based desktop ap
    npm install && cd new-view && npm install && npm run dev
    ```
 
-3. In main.js, change/comment the line that loads the URL to load the development server instead of the production build.
+3. In main.js, change/comment the line that loads the URL to load the development server instead of the production build. Additionally set the MAC address of your TV in `turnOnTv.js` file to enable the TV Turn on feature.
 
    ```javascript
    // main.js

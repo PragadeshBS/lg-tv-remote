@@ -7,6 +7,7 @@ const {
   powerOff,
   sendKeyboardKey,
 } = require("./lg.js");
+const { sendWakeOnLan } = require("./turnOnTv.js");
 const {
   handleKey,
   handleAppLaunch,
@@ -34,8 +35,8 @@ const createWindow = () => {
     height: 800,
   });
 
-  // win.loadURL("http://localhost:5173");
-  win.loadFile("./new-view/dist/index.html");
+  win.loadURL("http://localhost:5173");
+  // win.loadFile("./new-view/dist/index.html");
 };
 
 app.whenReady().then(() => {
@@ -53,6 +54,14 @@ app.whenReady().then(() => {
       audioStatus = res;
       win.webContents.send("get-audio-status", res);
     });
+    lgTv.subscribe("ssap://api/getServiceList", (_err, res) => {
+      // just printing the service list for now, can be used later if needed
+      console.log("Service List:", res);
+    });
+    lgTv.subscribe("ssap://system.launcher/getAppState", (_err, res) => {
+      // just printing the service list for now, can be used later if needed
+      console.log("Service List:", res);
+    });
   };
 
   const sendInfo = async () => {
@@ -69,6 +78,14 @@ app.whenReady().then(() => {
     try {
       lgTv = await connect(ip);
       win.webContents.send("connection-success", true);
+    } catch (error) {
+      return error;
+    }
+  });
+
+  ipcMain.handle("turnOnTv", async (_event) => {
+    try {
+      sendWakeOnLan();
     } catch (error) {
       return error;
     }

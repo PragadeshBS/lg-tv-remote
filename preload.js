@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron/renderer");
 
 contextBridge.exposeInMainWorld("electronAPI", {
   connectToTv: (ip) => ipcRenderer.invoke("connectToTv", ip),
+  turnOnTv: () => ipcRenderer.invoke("turnOnTv"),
   handleAction: (action) => ipcRenderer.send("handleAction", action),
   onGetVolume: (callback) =>
     ipcRenderer.on("get-volume", (_event, value) => callback(value)),
